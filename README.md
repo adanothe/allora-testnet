@@ -1,4 +1,12 @@
+
 # Allora Worker Node Guide
+## Allora Resource
+
+- **Website**: [allora website](https://www.allora.network/)
+- **Telegram**: [Join allora discussion](https://t.me/alloranetworkannouncements)
+- **Twitter**: [Follow allora on Twitter](https://x.com/AlloraNetwork)
+- **GitHub**: [allora github](https://github.com/allora-network)
+- **Documentation**: [docs](https://docs.allora.network/)
 
 ## System Requirements
 
@@ -96,7 +104,7 @@
 - **Configure Seed Phrase**: Replace `SeedPhrase` with your wallet seed phrase.
 
     ```bash
-    curl -O 
+    curl -O https://raw.githubusercontent.com/adanothe/allora-testnet/main/config.json
     SEED_PHRASE="SeedPhrase"
     sed -i "s/\"addressRestoreMnemonic\": \"[^\"]*\"/\"addressRestoreMnemonic\": \"$SEED_PHRASE\"/" config.json
     ```
@@ -118,19 +126,29 @@
     chmod +x init.config
     ./init.config
     
-    docker compose up --build -d
+    docker compose up -d
     ```
 
 - **View Logs**:
 
-    - For the worker logs:
-
+    - **Node Logs**:
+        Add the following to your bash profile to easily view logs:
         ```bash
-        docker logs -f --tail=20 worker
+        echo 'export WORKER_COMPOSE="$HOME/allora-huggingface-walkthrough/docker-compose.yaml"' >> ~/.bashrc
+        source ~/.bashrc
+        ```
+        To view logs:
+        ```bash
+        docker compose logs -f --tail=100
         ```
 
-    - For the inference logs:
+## Points & Leaderboard
 
-        ```bash
-        docker compose logs -f inference
-        ```
+You'll receive points on the [Allora Dashboard](https://app.allora.network/points/leaderboard) within the next few hours.
+
+## Follow Adanothe
+
+- **Telegram**: [Join the discussion](https://t.me/adanode)
+- **Twitter**: [Follow us on Twitter](https://twitter.com/adano_the)
+- **GitHub**: [View our repositories](https://github.com/adanothe)
+- **Documentation**: [docs](https://docs.adanothe.com/)
