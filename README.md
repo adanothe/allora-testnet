@@ -1,58 +1,136 @@
-<h1 align="center">Allora Worker Node Guide</h1>
+# Allora Worker Node Guide
 
 ## System Requirements
 
-| Requirement       | Minimum                    | 
-| ----------------- | -------------------------- | 
-| OS                | Windows, macOS, or Linux   | 
-| CPU               | Minimum of 1/2 core        | 
-| RAM               | 2 to 4 GB                  | 
-| Storage           | least 5GB SSD or NVMe      | 
+| Component       | Minimum Requirements           |
+| --------------- | ------------------------------ |
+| **Operating System** | Windows, macOS, or Linux       |
+| **CPU**              | 1/2 core minimum               |
+| **RAM**              | 2 to 4 GB                      |
+| **Storage**          | 5 GB SSD or NVMe               |
 
+## Server Prerequisites
 
-#### Install Server Prerequisites
+- **Update and Upgrade Server**: Ensure your server is up to date.
 
-- Server Prerequisites
-```shell
-sudo apt update & sudo apt upgrade -y
+    ```bash
+    sudo apt update && sudo apt upgrade -y
+    ```
 
-sudo apt install ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 -y
-```
+- **Install Required Packages**: Install the necessary dependencies.
 
-- Docker
-```shell
-curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/Dedenwrg/dependencies/main/docker/docker.sh | sudo sh
-```
+    ```bash
+    sudo apt install -y ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4
+    ```
 
-- Go
-```shell
-sudo rm -rf /usr/local/go
-curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
-echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
-source .bash_profile
-go version
-```
+- **Install Docker**: Use the following command to install Docker.
 
-- Python & pip
-```shell
-sudo apt install python3
-python3 --version
+    ```bash
+    curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/Dedenwrg/dependencies/main/docker/docker.sh | sudo sh
+    ```
 
-sudo apt install python3-pip
-pip3 --version
-```
+- **Install Go**: Remove any existing Go installation and install the latest version.
 
-### Intall allorad wallet
-```shell
-git clone https://github.com/allora-network/allora-chain.git
-cd allora-chain && make all
-allorad version
-```
-#### Create Wallet & Get faucet
-- Save & Import phrase to keplr 
+    ```bash
+    sudo rm -rf /usr/local/go
+    curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
+    echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
+    echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
+    source $HOME/.bash_profile
+    go version
+    ```
 
-```shell
-allorad keys add wallet
-```
-- Connect to Allora dashboard to find your Allora address or run allorad keys list
+- **Install Python & Pip**: Install Python 3 and pip.
+
+    ```bash
+    sudo apt install python3
+    python3 --version
+
+    sudo apt install python3-pip
+    pip3 --version
+    ```
+
+## Install Allorad Wallet
+
+- **Clone the Repository and Build the Wallet**: 
+
+    ```bash
+    git clone https://github.com/allora-network/allora-chain.git
+    cd allora-chain && make all
+    allorad version
+    ```
+
+## Create a Wallet and Obtain Test Tokens
+
+- **Create a Wallet**: Generate a new wallet and save the mnemonic phrase.
+
+    ```bash
+    allorad keys add wallet
+    ```
+
+- **Import to Keplr**: Import the mnemonic phrase into Keplr.
+
+- **Connect to the Allora Dashboard**: Use the [Allora Dashboard](https://app.allora.network?ref=eyJyZWZlcnJlcl9pZCI6IjVkNDgxNzNiLTQ2NDItNDM2ZS1iOTkyLTg0Njg2NDFjMTQwMCJ9) with Keplr.
+
+- **Add Allora Chain to Keplr**: Use [this link](https://explorer.edgenet.allora.network/wallet/suggest) to add the Allora chain to Keplr.
+
+- **Get Faucet Tokens**: Obtain test tokens from the [faucet](https://faucet.testnet-1.testnet.allora.network/).
+
+## Install & Run Worker
+
+- **Clone the Worker Repository**:
+
+    ```bash
+    cd $HOME
+    git clone https://github.com/allora-network/allora-huggingface-walkthrough
+    cd allora-huggingface-walkthrough
+    ```
+
+- **Prepare the Worker Directory**:
+
+    ```bash
+    mkdir -p worker-data
+    chmod -R 777 worker-data
+    ```
+
+- **Configure Seed Phrase**: Replace `SeedPhrase` with your wallet seed phrase.
+
+    ```bash
+    curl -O 
+    SEED_PHRASE="SeedPhrase"
+    sed -i "s/\"addressRestoreMnemonic\": \"[^\"]*\"/\"addressRestoreMnemonic\": \"$SEED_PHRASE\"/" config.json
+    ```
+
+- **Create Coingecko API Key**:
+
+    - Create a demo account on [Coingecko](https://www.coingecko.com/en/developers/dashboard).
+    
+    - Replace `APIKEY` with your Coingecko API key.
+
+    ```bash
+    COINGECKO_API_KEY="APIKEY"
+    sed -i "s/<Your Coingecko API key>/$COINGECKO_API_KEY/" app.py
+    ```
+
+- **Run Huggingface Worker**:
+
+    ```bash
+    chmod +x init.config
+    ./init.config
+    
+    docker compose up --build -d
+    ```
+
+- **View Logs**:
+
+    - For the worker logs:
+
+        ```bash
+        docker logs -f --tail=20 worker
+        ```
+
+    - For the inference logs:
+
+        ```bash
+        docker compose logs -f inference
+        ```
